@@ -55,7 +55,8 @@
                 <template scope="scope">
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
-                    <el-button  type="success" size="small" @click="AddContract(scope.$index, scope.row)">生成合同</el-button>
+                    <el-button type="success" size="small" @click="addContract(scope.$index, scope.row)">生成合同
+                    </el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -77,15 +78,15 @@
                 <el-form-item label="订金单号" prop="sn">
                     <el-input v-model="order.sn" auto-complete="off"></el-input>
                 </el-form-item>
-                 <el-form-item label="订单日期">
-                     <el-date-picker
-                             v-model="order.signTime"
-                             @change="dateChangesignTime"
-                             type="date"
-                             value-format="yyyy-MM-dd"
-                             placeholder="选择日期">
-                     </el-date-picker>
-                 </el-form-item>
+                <el-form-item label="订单日期">
+                    <el-date-picker
+                            v-model="order.signTime"
+                            @change="dateChangesignTime"
+                            type="date"
+                            value-format="yyyy-MM-dd"
+                            placeholder="选择日期">
+                    </el-date-picker>
+                </el-form-item>
                 <el-form-item label="定金金额" prop="sum">
                     <el-input v-model.number="order.sum" auto-complete="off"></el-input>
                 </el-form-item>
@@ -95,20 +96,20 @@
                 <el-form-item label="营销人员" prop="seller">
                     <el-select value-key="id" v-model="order.seller" placeholder="请选择营销人员">
                         <el-option v-for="item in sellerlist"
-                                   :key="item.id"
+                                   :key="item.sn"
                                    :value="item"
                                    :label="item.username"></el-option>
                     </el-select>
                 </el-form-item>
 
-                 <el-form-item label="定金客户" prop="customer">
-                     <el-select value-key="id" v-model="order.customer"  placeholder="请选择定金客户">
-                         <el-option v-for="item in customerlist"
-                                    :key="item.id"
-                                    :value="item"
-                                    :label="item.name"></el-option>
-                     </el-select>
-                 </el-form-item>
+                <el-form-item label="定金客户" prop="customer">
+                    <el-select value-key="id" v-model="order.customer" placeholder="请选择定金客户">
+                        <el-option v-for="item in customerlist"
+                                   :key="item.id"
+                                   :value="item"
+                                   :label="item.name"></el-option>
+                    </el-select>
+                </el-form-item>
 
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -157,12 +158,12 @@
                     beginTime: "",
                     endTime: "",
                 },
-                /* 查询列表的 */
+                /* 订单,不是合同 */
                 orders: [],
                 /*营销人员*/
                 sellerlist: [],
                 /*订单客户*/
-                customerlist:[],
+                customerlist: [],
                 /*分页*/
                 total: 0,
                 pageSize: 10,
@@ -178,30 +179,28 @@
                     sum: "",
                     intro: "",
                     seller: "",
-                    customer:"",
+                    customer: "",
                 },
                 /* 弹出框是否显示 */
                 formVisible: false,
                 addLoading: false,
-                /*验证规则*/
                 addFormRules: {
                     sum: [
-                        { type: 'number',required: true, message: '定金金额', trigger: 'blur'}
+                        {type: 'number', required: true, message: '定金金额', trigger: 'blur'}
                     ],
                     intro: [
                         {required: true, message: '摘要', trigger: 'blur'}
                     ]
                 },
-
             }
         },
         methods: {
             /*生成合同按钮*/
-            AddContract(i, r){
+            addContract(i, r) {
                 //给customer重新赋值
                 this.order = Object.assign({}, r);
-                let myCustomer ={id:this.order.customer.id};
-                let mySeller ={id:this.order.seller.id};
+                let myCustomer = {id: this.order.customer.id};
+                let mySeller = {id: this.order.seller.id};
                 this.order.customer = myCustomer;
                 this.order.seller = mySeller;
                 this.order.sum = "";
@@ -225,16 +224,15 @@
             },
             /* 后台查询emplyee.list返回给order */
             getSellerList() {
-                this.$http.patch("/employee/list").then(res => {
+                this.$http.post("/employee/getEmployee").then(res => {
                     this.sellerlist = res.data;
-
                 });
             },
             /* 后台查询customer.list返回给order */
             getCustomerList() {
                 this.$http.patch("/customer/list").then(res => {
-                  this.customerlist = res.data;
-
+                    this.customerlist = res.data;
+                    console.debug(this.customerlist);
                 });
             },
             /*时期格式化*/
@@ -245,7 +243,7 @@
             dateChangeendTime(val) {
                 this.searchForm.endTime = val;
             },
-            dateChangesignTime(val){
+            dateChangesignTime(val) {
                 this.order.signTime = val;
             },
             /* 当前页发生变化时,会触发这个函数 */
@@ -292,27 +290,18 @@
             },
             /*编辑*/
             handleEdit(i, r) {
-                this.order ={};
-                /*调用方法获取seller和customer集合对象*/
-                this.getSellerList();
-                this.getCustomerList();
+                this.order = {};
                 this.title = "修改订单";
                 this.formVisible = true;
                 this.order = Object.assign({}, r);
-
-
-
             },
-            /*添加*/
+            /* 新增订单 */
             handleAdd() {
-                this.order ={};
-                this.getSellerList();
-                this.getCustomerList();
+                this.order = {};
                 this.formVisible = true;
                 this.title = "新增订单";
-                /*sn自动生成，通过随机数赋值*/
-                let mysn = Math.round(Math.random()*1000000);
-                this.order.sn = mysn;
+                /* sn自动生成，通过随机数赋值 */
+                this.order.sn = Math.round(Math.random() * 1000000);
             },
             /* 提交 */
             submit() {
@@ -324,8 +313,6 @@
                         /* 通过表单中是否有id来判断是新增还是修改 */
                         if (param.id) {
                             /* 有id就代表是修改 */
-                               /*param.seller = {id:this.mySellerId}
-                                param.customer = {id:this.myCustomerId}*/
                             this.$http.post("/order/update", param).then(res => {
                                 if (res.data.success) {
                                     this.addLoading = false;
@@ -367,11 +354,11 @@
                     }
                 });
             },
-            /*获取行的变化*/
+            /* 获取行的变化 */
             selsChange: function (sels) {
                 this.sels = sels;
             },
-            /*批量删除*/
+            /* 批量删除 */
             batchRemove() {
                 this.$confirm('确认删除该记录吗?', '提示', {
                     type: 'warning'
@@ -393,11 +380,10 @@
         },
         mounted() {
             this.getOrders();
+            this.getSellerList();
+            this.getCustomerList();
         }
     }
-
 </script>
-
 <style scoped>
-
 </style>

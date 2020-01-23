@@ -86,7 +86,6 @@
                 this.listLoading = true;
                 this.$http.patch("/customertransfer/selectPageByQuery", param).then(res => {
                     this.customertransfer = res.data.result;
-                    console.debug(this.customertransfer);
                     this.total = res.data.total;
                     this.listLoading = false;
                 });
@@ -116,7 +115,7 @@
                 this.$confirm('确认删除该记录吗?', '提示', {
                     type: 'warning'
                 }).then(() => {
-                    this.$http.patch("/customertransf/batchDelete", this.sels).then(res => {
+                    this.$http.patch("/customertransfer/batchDelete", this.sels).then(res => {
                         if (res.data.success) {
                             this.$message({
                                 message: '删除成功',

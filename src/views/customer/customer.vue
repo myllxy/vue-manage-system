@@ -86,37 +86,34 @@
                 <!-- 只有市场部经理才能进行客户移交操作 -->
                 <template v-if="getSessionItem()">
                     <el-form-item label="营销人员" prop="seller">
-                        <el-select v-model="addForm.seller" placeholder="请选择营销人员">
-                            <!-- seller中相当于存储了label与value映射关系在页面刚刚加载的时候 -->
-                            <!-- 而现在我拿到了addForm.seller,它被处理成一个编号即sn,根据映射规则就能拿到对应的username了 -->
-                            <!-- 回显成功 -->
-                            <el-option v-for="(item, index) in seller"
-                                       :key="index"
-                                       :value="item.value"
-                                       :label="item.label"></el-option>
+                        <el-select value-key="sn" v-model="addForm.seller" placeholder="请选择营销人员">
+                            <el-option v-for="item in seller"
+                                       :key="item.sn"
+                                       :value="item"
+                                       :label="item.username"></el-option>
                         </el-select>
                     </el-form-item>
                 </template>
                 <!-- 新增客户所有用户都可以选择营销人员 -->
                 <template v-else-if="this.title==='新增客户'">
                     <el-form-item label="营销人员" prop="seller">
-                        <el-select v-model="addForm.seller" placeholder="请选择营销人员">
+                        <el-select value-key="sn" v-model="addForm.seller" placeholder="请选择营销人员">
                             <!-- seller中相当于存储了label与value映射关系在页面刚刚加载的时候 -->
                             <!-- 而现在我拿到了addForm.seller,它被处理成一个编号即sn,根据映射规则就能拿到对应的username了 -->
                             <!-- 回显成功 -->
-                            <el-option v-for="(item, index) in seller"
-                                       :key="index"
-                                       :value="item.value"
-                                       :label="item.label"></el-option>
+                            <el-option v-for="item in seller"
+                                       :key="index.sn"
+                                       :value="item"
+                                       :label="item.username"></el-option>
                         </el-select>
                     </el-form-item>
                 </template>
                 <el-form-item label="客户来源" prop="customerSource">
-                    <el-select v-model="addForm.customerSource" placeholder="请选择客户来源">
-                        <el-option v-for="(item, index) in customerSourceDic"
-                                   :key="index"
-                                   :value="item.value"
-                                   :label="item.label"></el-option>
+                    <el-select value-key="requence" v-model="addForm.customerSource" placeholder="请选择客户来源">
+                        <el-option v-for="item in customerSourceDic"
+                                   :key="item.requence"
+                                   :value="item"
+                                   :label="item.name"></el-option>
                     </el-select>
                 </el-form-item>
             </el-form>
@@ -140,19 +137,19 @@
                     <el-radio v-model="traceCusHisForm.traceResult" :label="-1">差</el-radio>
                 </el-form-item>
                 <el-form-item label="跟进方式" prop="traceType">
-                    <el-select v-model="traceCusHisForm.traceType" placeholder="请选择跟进方式">
-                        <el-option v-for="(item, index) in customerTraceTypeDic"
-                                   :key="index"
-                                   :value="item.value"
-                                   :label="item.label"></el-option>
+                    <el-select value-key="requence" v-model="traceCusHisForm.traceType" placeholder="请选择跟进方式">
+                        <el-option v-for="item in customerTraceTypeDic"
+                                   :key="item.requence"
+                                   :value="item"
+                                   :label="item.name"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="跟进人" prop="traceUser">
-                    <el-select v-model="traceCusHisForm.traceUser" placeholder="请选择营销人员">
-                        <el-option v-for="(item, index) in customerTraceUserDic"
-                                   :key="index"
-                                   :value="item.value"
-                                   :label="item.label"></el-option>
+                    <el-select value-key="sn" v-model="traceCusHisForm.traceUser" placeholder="请选择营销人员">
+                        <el-option v-for="item in customerTraceUserDic"
+                                   :key="item.sn"
+                                   :value="item"
+                                   :label="item.username"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="跟进时间" prop="traceTime">
@@ -187,12 +184,12 @@
             <el-form :model="transferCustomerForm" label-width="100px" :rules="transferCustomerFormRules"
                      ref="transferCustomerForm">
                 <el-form-item label="客户：" prop="customer">
-                    {{transferCustomerForm.customer}}
+                    {{transferCustomerForm.customer.name}}
                 </el-form-item>
                 <!-- :label-position label-width必须在一起才能同时生效 -->
                 <el-form-item label="原营销人员：" prop="oldSeller">
                     <!-- 原营销人员不需要修改,显示出来就好了 -->
-                    {{transferCustomerForm.oldSeller}}
+                    {{transferCustomerForm.oldSeller.username}}
                 </el-form-item>
                 <el-form-item label="移交时间" prop="traceTime">
                     <el-date-picker v-model="transferCustomerForm.transTime" align="right" type="date"
@@ -202,11 +199,11 @@
                     </el-date-picker>
                 </el-form-item>
                 <el-form-item label="新营销人员：" prop="newSeller">
-                    <el-select v-model="transferCustomerForm.newSeller" placeholder="请选择新营销人员">
-                        <el-option v-for="(item, index) in seller"
-                                   :key="index"
-                                   :value="item.value"
-                                   :label="item.label"></el-option>
+                    <el-select value-key="sn" v-model="transferCustomerForm.newSeller" placeholder="请选择新营销人员">
+                        <el-option v-for="item in seller"
+                                   :key="item.sn"
+                                   :value="item"
+                                   :label="item.username"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="移交原因：" prop="traceUser">
@@ -283,15 +280,6 @@
                     title: [
                         {required: true, message: '请输入主题', trigger: 'blur'}
                     ],
-                    // traceUser: [
-                    //     {required: true, message: '请输入跟进人', trigger: 'blur'}
-                    // ],
-                    // traceTime: [
-                    //     {required: true, message: '请输入跟进时间', trigger: 'blur'}
-                    // ],
-                    // traceType: [
-                    //     {required: true, message: '请输入跟进方式', trigger: 'blur'}
-                    // ]
                 },
                 /* 客户新增界面数据 */
                 /* 客户移交规则 */
@@ -299,15 +287,6 @@
                     transReason: [
                         {required: true, message: '请输入移交原因', trigger: 'blur'}
                     ],
-                    // traceUser: [
-                    //     {required: true, message: '请输入跟进人', trigger: 'blur'}
-                    // ],
-                    // traceTime: [
-                    //     {required: true, message: '请输入跟进时间', trigger: 'blur'}
-                    // ],
-                    // traceType: [
-                    //     {required: true, message: '请输入跟进方式', trigger: 'blur'}
-                    // ]
                 },
                 /* 客户新增界面表单数据 */
                 addForm: {
@@ -338,7 +317,6 @@
                 customerSourceName: [],
                 /* 客户来源的名字出现次数 */
                 customerSourceTime: [],
-
             }
         },
         methods: {
@@ -370,8 +348,8 @@
                 this.title = '客户移交';
                 /* 代表一次只能移交一个客户 */
                 if (this.sels.length === 1) {
-                    this.transferCustomerForm.customer = this.sels[0].name;
-                    this.transferCustomerForm.oldSeller = this.sels[0].seller.username;
+                    this.transferCustomerForm.customer = this.sels[0];
+                    this.transferCustomerForm.oldSeller = this.sels[0].seller;
                     this.transferVisible = true;
                 } else {
                     this.$confirm('请选中一个客户后再进行操作', '提示', {
@@ -381,6 +359,8 @@
             },
             reportCustomerSource() {
                 this.$http.patch("/customer/list").then(res => {
+                    this.customerSourceName = [];
+                    this.customerSourceTime = [];
                     /* 这种东西我们一般将res打印出来找到我们需要的属性来填充就好了 */
                     let results = res.data;
                     let resultSet = new Set();
@@ -439,56 +419,27 @@
                 }
             },
             /* 后台查询客户来源数据字典返回给customerSourceDic */
-            getCusDic() {
+            getCustomerSourceDic() {
                 /* 在这里可以将传入的id写死为1 */
                 /* 因为查的是数据字典 */
                 this.$http.get("/systemDictionary/getDic/1").then(res => {
-                    for (let result of res.data) {
-                        this.customerSourceDic.push({
-                            /* requence就是数据字典明细中的数据字典序号,根据该序号就能找到数据字典明细值 */
-                            /* 这里用value标签接收,因为在customer中保存的实际上是数据字典序列,
-                               只有查的时候才替换成数据字典明细值 */
-                            value: result.requence,
-                            label: result.name
-                        });
-                    }
+                    this.customerSourceDic = res.data;
                 });
             },
             /* 后台查询营销人员返回给seller */
             getSeller() {
                 this.$http.post("/employee/getEmployee").then(res => {
-                    for (let result of res.data) {
-                        this.seller.push({
-                            value: result.sn,
-                            label: result.username
-                        });
-                    }
+                    this.seller = res.data;
                 });
             },
             getCusTraceHistory() {
                 /* 跟进方式对应sn为2的数据字典 */
                 this.$http.get("/systemDictionary/getDic/2").then(res => {
-                    for (let result of res.data) {
-                        this.customerTraceTypeDic.push({
-                            /* requence就是数据字典明细中的数据字典序号,根据该序号就能找到数据字典明细值 */
-                            /* 这里用value标签接收,因为在customer中保存的实际上是数据字典序列,
-                               只有查的时候才替换成数据字典明细值 */
-                            value: result.requence,
-                            label: result.name
-                        });
-                    }
+                    this.customerTraceTypeDic = res.data;
                 });
                 /* 跟进用户的下拉框 */
                 this.$http.post("/employee/getEmployee").then(res => {
-                    for (let result of res.data) {
-                        this.customerTraceUserDic.push({
-                            /* requence就是数据字典明细中的数据字典序号,根据该序号就能找到数据字典明细值 */
-                            /* 这里用value标签接收,因为在customer中保存的实际上是数据字典序列,
-                               只有查的时候才替换成数据字典明细值 */
-                            value: result.sn,
-                            label: result.realName
-                        });
-                    }
+                    this.customerTraceUserDic = res.data;
                 });
             },
             /* 性别格式化 */
@@ -527,7 +478,7 @@
                     /* 基于准备好的dom，初始化echarts实例 */
                     let baseChart = this.$refs.chart;
                     let myChart = this.$echarts.init(baseChart);
-                    // 绘制图表
+                    /* 绘制图表 */
                     myChart.setOption({
                         title: {text: '客户来源报表'},
                         tooltip: {},
@@ -546,7 +497,7 @@
             getSessionItem() {
                 let user = sessionStorage.getItem("user");
                 let userObj = eval('(' + user + ')');
-                return userObj.username === 'admin';
+                return userObj.username === 'employee_1';
             },
             handleDel(i, r) {
                 this.$confirm('确认删除该记录吗?', '提示', {
@@ -582,8 +533,6 @@
                                 this.addFormVisible = true;
                                 /* 回显数据 */
                                 this.addForm = Object.assign({}, r);
-                                this.addForm.customerSource = this.addForm.customerSource.requence;
-                                this.addForm.seller = this.addForm.seller.sn;
                             } else {
                                 this.$notify.error({
                                     title: '错误',
@@ -598,8 +547,6 @@
                     this.addFormVisible = true;
                     /* 回显数据 */
                     this.addForm = Object.assign({}, r);
-                    this.addForm.customerSource = this.addForm.customerSource.requence;
-                    this.addForm.seller = this.addForm.seller.sn;
                 }
             },
             handleAdd() {
@@ -617,35 +564,29 @@
                         /* 一次只能跟进一个客户 */
                         param.customer = this.sels[0];
                         /* 在customer.vue页面只能进行跟进,管理跟进用户需要在跟进用户信息管理页面 */
-                        this.$http.get("/employee/getEmployeeBySn/" + param.traceUser).then(res => {
-                            param.traceUser = res.data;
-                            this.$http.get("/systemDictionaryItem/get/" + param.traceType).then(res => {
-                                param.traceType = res.data;
-                                this.$http.put("/customertracehistory/save", param).then(res => {
+                        this.$http.put("/customertracehistory/save", param).then(res => {
+                            if (res.data.success) {
+                                this.addLoading = false;
+                                this.$message({
+                                    message: '跟进成功',
+                                    type: 'success'
+                                });
+                                /* 跟进成功后修改客户信息管理中对应的客户状态为已跟进 */
+                                param.status = '已跟进';
+                                param.id = param.customer.id;
+                                this.$http.post("/customer/update", param).then(res => {
                                     if (res.data.success) {
-                                        this.addLoading = false;
-                                        this.$message({
-                                            message: '跟进成功',
-                                            type: 'success'
-                                        });
-                                        /* 跟进成功后修改客户信息管理中对应的客户状态为已跟进 */
-                                        param.status = '已跟进';
-                                        param.id = param.customer.id;
-                                        this.$http.post("/customer/update", param).then(res => {
-                                            if (res.data.success) {
-                                                this.$refs['traceCusHisForm'].resetFields();
-                                                this.dialogVisible = false;
-                                                this.getCustomers();
-                                            }
-                                        });
-                                    } else {
-                                        this.$notify.error({
-                                            title: '错误',
-                                            message: res.data.msg
-                                        });
+                                        this.$refs['traceCusHisForm'].resetFields();
+                                        this.dialogVisible = false;
+                                        this.getCustomers();
                                     }
                                 });
-                            });
+                            } else {
+                                this.$notify.error({
+                                    title: '错误',
+                                    message: res.data.msg
+                                });
+                            }
                         });
                     }
                 });
@@ -658,40 +599,32 @@
                         let param = Object.assign({}, this.transferCustomerForm);
                         /* 一次只能移交一个客户 */
                         param.customer = this.sels[0];
-                        this.$http.get("/employee/getEmployeeBySn/" + param.newSeller).then(res => {
-                            param.newSeller = res.data;
-                            this.$http.get("/employee/getEmployeeByName/" + param.oldSeller).then(res => {
-                                param.oldSeller = res.data;
-                                param.transUser = eval('(' + sessionStorage.getItem("user") + ')');
-                                console.debug(param);
-                                this.$http.put("/customertransfer/save", param).then(res => {
+                        param.transUser = eval('(' + sessionStorage.getItem("user") + ')');
+                        console.debug(param);
+                        this.$http.put("/customertransfer/save", param).then(res => {
+                            if (res.data.success) {
+                                this.addLoading = false;
+                                let param2 = {};
+                                param2.seller = param.newSeller;
+                                param2.id = this.sels[0].id;
+                                this.$http.post("/customer/update", param2).then(res => {
                                     if (res.data.success) {
-                                        this.addLoading = false;
-                                        let param2 = {};
-                                        this.$http.get("/employee/getEmployeeBySn/" + param.newSeller.sn).then(res => {
-                                            param2.seller = res.data;
-                                            param2.id = this.sels[0].id;
-                                            this.$http.post("/customer/update", param2).then(res => {
-                                                if (res.data.success) {
-                                                    this.transferVisible = false;
-                                                    this.getCustomers();
-                                                    this.$message({
-                                                        message: '移交成功',
-                                                        type: 'success'
-                                                    });
-                                                } else {
-                                                    this.$message.error(res.data.msg);
-                                                }
-                                            });
+                                        this.transferVisible = false;
+                                        this.getCustomers();
+                                        this.$message({
+                                            message: '移交成功',
+                                            type: 'success'
                                         });
                                     } else {
-                                        this.$notify.error({
-                                            title: '错误',
-                                            message: res.data.msg
-                                        });
+                                        this.$message.error(res.data.msg);
                                     }
                                 });
-                            });
+                            } else {
+                                this.$notify.error({
+                                    title: '错误',
+                                    message: res.data.msg
+                                });
+                            }
                         });
                     }
                 });
@@ -702,55 +635,47 @@
                         this.addLoading = true;
                         /* 获取addForm表单中的数据 */
                         let param = Object.assign({}, this.addForm);
-                        /* 新增、修改与提交 */
-                        /* 通过requence来查找整个对象 */
-                        this.$http.get("/systemDictionaryItem/get/" + param.customerSource).then(res => {
-                            param.customerSource = res.data;
-                            this.$http.get("/employee/getEmployeeBySn/" + param.seller).then(res => {
-                                param.seller = res.data;
-                                if (param.id) {
-                                    /* 通过表单中是否有id来判断是新增还是修改 */
-                                    this.$http.post("/customer/update", param).then(res => {
-                                        /* 有id就代表是修改 */
-                                        if (res.data.success) {
-                                            this.addLoading = false;
-                                            this.$message({
-                                                message: '提交成功',
-                                                type: 'success'
-                                            });
-                                            this.addFormVisible = false;
-                                            this.$refs['addForm'].resetFields();
-                                            this.getCustomers();
-                                        } else {
-                                            this.$notify.error({
-                                                title: '错误',
-                                                message: res.data.msg
-                                            });
-                                        }
+                        if (param.id) {
+                            /* 通过表单中是否有id来判断是新增还是修改 */
+                            this.$http.post("/customer/update", param).then(res => {
+                                /* 有id就代表是修改 */
+                                if (res.data.success) {
+                                    this.addLoading = false;
+                                    this.$message({
+                                        message: '提交成功',
+                                        type: 'success'
                                     });
+                                    this.addFormVisible = false;
+                                    this.$refs['addForm'].resetFields();
+                                    this.getCustomers();
                                 } else {
-                                    /* 没有id就代表是新增,因为id设置了主键自增 */
-                                    this.$http.put("/customer/save", param).then(res => {
-                                        if (res.data.success) {
-                                            this.addLoading = false;
-                                            this.$message({
-                                                message: '提交成功',
-                                                type: 'success'
-                                            });
-                                            this.addFormVisible = false;
-                                            /* 重置addForm表单 */
-                                            this.$refs['addForm'].resetFields();
-                                            this.getCustomers();
-                                        } else {
-                                            this.$notify.error({
-                                                title: '错误',
-                                                message: res.data.msg
-                                            });
-                                        }
+                                    this.$notify.error({
+                                        title: '错误',
+                                        message: res.data.msg
                                     });
                                 }
                             });
-                        });
+                        } else {
+                            /* 没有id就代表是新增,因为id设置了主键自增 */
+                            this.$http.put("/customer/save", param).then(res => {
+                                if (res.data.success) {
+                                    this.addLoading = false;
+                                    this.$message({
+                                        message: '提交成功',
+                                        type: 'success'
+                                    });
+                                    this.addFormVisible = false;
+                                    /* 重置addForm表单 */
+                                    this.$refs['addForm'].resetFields();
+                                    this.getCustomers();
+                                } else {
+                                    this.$notify.error({
+                                        title: '错误',
+                                        message: res.data.msg
+                                    });
+                                }
+                            });
+                        }
                     }
                 });
             },
@@ -779,7 +704,7 @@
         mounted() {
             this.getCustomers();
             /* 在页面加载的时候就获取下拉框的数据 */
-            this.getCusDic();
+            this.getCustomerSourceDic();
             this.getSeller();
             this.getCusTraceHistory();
         }

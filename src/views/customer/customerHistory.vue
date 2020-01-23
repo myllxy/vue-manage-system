@@ -85,19 +85,19 @@
                     <el-radio v-model="form.traceResult" :label="-1">差</el-radio>
                 </el-form-item>
                 <el-form-item label="跟进方式" prop="traceType">
-                    <el-select v-model="form.traceType" placeholder="请选择跟进方式">
-                        <el-option v-for="(item, index) in traceTypeDic"
-                                   :key="index"
-                                   :value="item.value"
-                                   :label="item.label"></el-option>
+                    <el-select value-key="requence" v-model="form.traceType" placeholder="请选择跟进方式">
+                        <el-option v-for="item in traceTypeDic"
+                                   :key="item.requence"
+                                   :value="item"
+                                   :label="item.name"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="跟进人" prop="traceUser">
-                    <el-select v-model="form.traceUser" placeholder="请选择营销人员">
-                        <el-option v-for="(item, index) in traceUser_"
-                                   :key="index"
-                                   :value="item.value"
-                                   :label="item.label"></el-option>
+                    <el-select value-key="sn" v-model="form.traceUser" placeholder="请选择营销人员">
+                        <el-option v-for="item in traceUser_"
+                                   :key="item.sn"
+                                   :value="item"
+                                   :label="item.username"></el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="备注" prop="remark">
@@ -207,26 +207,13 @@
                 /* 在这里可以将传入的id写死为2 */
                 /* 因为查的是数据字典 */
                 this.$http.get("/systemDictionary/getDic/2").then(res => {
-                    for (let result of res.data) {
-                        this.traceTypeDic.push({
-                            /* requence就是数据字典明细中的数据字典序号,根据该序号就能找到数据字典明细值 */
-                            /* 这里用value标签接收,因为在customer中保存的实际上是数据字典序列,
-                               只有查的时候才替换成数据字典明细值 */
-                            value: result.requence,
-                            label: result.name
-                        });
-                    }
+                    this.traceTypeDic = res.data;
                 });
             },
             /* 后台查询营销人员返回给traceUser_ */
             getTraceUser() {
                 this.$http.post("/employee/getEmployee").then(res => {
-                    for (let result of res.data) {
-                        this.traceUser_.push({
-                            value: result.sn,
-                            label: result.realName
-                        });
-                    }
+                    this.traceUser_ = res.data;
                 });
             },
             handleDel(i, r) {
@@ -250,10 +237,8 @@
             handleEdit(i, r) {
                 this.title = "修改跟进客户";
                 this.formVisible = true;
-                this.form = Object.assign({}, r);
                 /* 回显数据 */
-                this.form.traceType = this.form.traceType.requence;
-                this.form.traceUser = this.form.traceUser.sn;
+                this.form = Object.assign({}, r);
             },
             /* 修改提交 */
             submitConsumerTraceHistory() {
@@ -262,28 +247,22 @@
                         this.addLoading = true;
                         /* 获取form表单中的数据 */
                         let param = Object.assign({}, this.form);
-                        this.$http.get("/employee/getEmployeeBySn/" + param.traceUser).then(res => {
-                            param.traceUser = res.data;
-                            this.$http.get("/systemDictionaryItem/get/" + param.traceType).then(res => {
-                                param.traceType = res.data;
-                                this.$http.post("/customertracehistory/update", param).then(res => {
-                                    if (res.data.success) {
-                                        this.addLoading = false;
-                                        this.$message({
-                                            message: '提交成功',
-                                            type: 'success'
-                                        });
-                                        this.formVisible = false;
-                                        this.$refs['form'].resetFields();
-                                        this.getCustomersTraceHistory();
-                                    } else {
-                                        this.$notify.error({
-                                            title: '错误',
-                                            message: res.data.msg
-                                        });
-                                    }
+                        this.$http.post("/customertracehistory/update", param).then(res => {
+                            if (res.data.success) {
+                                this.addLoading = false;
+                                this.$message({
+                                    message: '提交成功',
+                                    type: 'success'
                                 });
-                            });
+                                this.formVisible = false;
+                                this.$refs['form'].resetFields();
+                                this.getCustomersTraceHistory();
+                            } else {
+                                this.$notify.error({
+                                    title: '错误',
+                                    message: res.data.msg
+                                });
+                            }
                         });
                     }
                 });

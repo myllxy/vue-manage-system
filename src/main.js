@@ -39,8 +39,6 @@ const i18n = new VueI18n({
 
 //拦截器   ajax拦截器（每次发送ajax请求之前进行拦截）
 axios.interceptors.request.use(config => {
-
-    console.debug("========================="+config)
     if (sessionStorage.getItem('sessionId')) {
         // 让每个请求携带token--['X-Token']为自定义key 请根据实际情况自行修改
         config.headers['X-TOKEN'] = sessionStorage.getItem('sessionId')
