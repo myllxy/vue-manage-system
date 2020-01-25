@@ -33,9 +33,9 @@
             </el-table-column>
             <el-table-column label="开发状态">
                 <template scope="scope">
-                    <span v-if="customerDevPlans[scope.$index].developStatus==-1" style="color: red">开发失败</span>
-                    <span v-else-if="customerDevPlans[scope.$index].developStatus==0" style="color:orange ">开发中</span>
-                    <span v-else="customerDevPlans[scope.$index].developStatus==1" style="color: greenyellow">开发成功</span>
+                    <span v-if="customerDevPlans[scope.$index].developStatus===-1" style="color: red">开发失败</span>
+                    <span v-else-if="customerDevPlans[scope.$index].developStatus===0" style="color:orange ">开发中</span>
+                    <span v-else="customerDevPlans[scope.$index].developStatus===1" style="color: greenyellow">开发成功</span>
                 </template>
             </el-table-column>
             <el-table-column prop="inputTime" label="创建时间">

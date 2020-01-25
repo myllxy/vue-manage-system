@@ -41,11 +41,11 @@
             </el-table-column>
             <el-table-column fixed="right" prop="status" label="客户状态" width="170">
                 <template slot-scope="scope">
-                    <span v-if="scope.row.status === '初始录入'" style="color:#37B328">
+                    <span v-if="scope.row.status === '初始录入'" style="color:#37B328;font-weight:bold">
                         {{ scope.row.status }}</span>
-                    <span v-if="scope.row.status === '已跟进'" style="color: #ff131a">
+                    <span v-if="scope.row.status === '已跟进'" style="color: #ff131a;font-weight:bold">
                         {{ scope.row.status }}</span>
-                    <span v-if="scope.row.status === '已放入资源池'" style="color: #2b39ff">
+                    <span v-if="scope.row.status === '已放入资源池'" style="color: #2b39ff;font-weight:bold">
                         {{ scope.row.status }}</span>
                 </template>
             </el-table-column>

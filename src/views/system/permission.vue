@@ -58,6 +58,9 @@
                 <el-form-item label="资源地址" prop="resource">
                     <el-input v-model="form.resource" auto-complete="off"></el-input>
                 </el-form-item>
+                <el-form-item label="编号" prop="sn">
+                    <el-input v-model="form.sn" auto-complete="off"></el-input>
+                </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
                 <el-button @click.native="formVisible = false">取消</el-button>
@@ -96,9 +99,9 @@
                 title: "",
                 //弹出框form表单中对应的数据
                 form: {
-                    id: "",
                     name: "",
                     resource: "",
+                    sn: ""
                 },
                 //弹出框是否显示  false代表不显示
                 formVisible: false,
@@ -127,7 +130,6 @@
                 //开启加载框
                 this.listLoading = true;
                 this.$http.patch("/permission/selectPageByQuery", param).then(res => {
-                    console.debug(res);
                     this.permissions = res.data.result;
                     this.total = res.data.total;
                     this.listLoading = false;
@@ -160,6 +162,8 @@
                 this.formVisible = true;
                 //回显数据
                 this.form = Object.assign({}, r);
+                delete this.form.roles;
+                console.debug(this.form);
             },
             //提交数据
             submit() {
@@ -167,13 +171,13 @@
                 this.$refs.addForm.validate((valid) => {
                     if (valid) {//校验通过之后就进入该代码块
                         //加载框
-                        this.addLoading = true;
+                        // this.addLoading = true;
                         //获取form表单中的数据
                         let param = Object.assign({}, this.form);
-                        console.debug(param)
+                        console.debug(param);
                         if (param.id) {
                             //保存数据
-                            this.$http.post("/permissions/update", param).then(res => {
+                            this.$http.post("/permission/update", param).then(res => {
                                 //提交成功
                                 if (res.data.success) {
                                     //停止添加按钮的加载框
@@ -184,8 +188,7 @@
                                     });
                                     //弹出框关闭
                                     this.formVisible = false;
-                                    /*//重置form表单
-                                    this.$refs['addForm'].resetFields();*/
+                                    this.$refs['addForm'].resetFields();
                                     //加载列表
                                     this.getPermission();
                                 } else {
@@ -208,8 +211,7 @@
                                     });
                                     //弹出框关闭
                                     this.formVisible = false;
-                                    /*//重置form表单
-                                    this.$refs['addForm'].resetFields();*/
+                                    this.$refs['addForm'].resetFields();
                                     //加载列表
                                     this.getPermission();
                                 } else {
@@ -228,7 +230,7 @@
                 this.$confirm('确认删除该记录吗?', '提示', {
                     type: 'warning'
                 }).then(() => {
-                    this.$http.delete("/permission/delete/" + r.id).then(res => {
+                    this.$http.delete("/permission/delete/" + r.sn).then(res => {
                         if (res.data.success) {
                             this.$message({
                                 message: '删除成功',

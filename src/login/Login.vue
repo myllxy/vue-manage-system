@@ -34,7 +34,7 @@
             return {
                 logining: false,
                 ruleForm2: {
-                    account: 'admin',
+                    account: 'employee_1',
                     checkPass: 'admin'
                 },
                 rules2: {
