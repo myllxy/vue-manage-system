@@ -34,7 +34,7 @@
                     <span v-if="scope.row.parent === null">无上级部门</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="childrens" :formatter="formatterDepartment" label="子部门" width="170">
+            <el-table-column prop="childrens" :formatter="departmentFormatter" label="子部门" width="170">
             </el-table-column>
             <el-table-column prop="tenant.companyName" label="租户" width="170">
             </el-table-column>
@@ -72,6 +72,10 @@
                 </el-form-item>
                 <el-form-item label="部门编码" prop="sn">
                     <el-input v-model="form.sn" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="是否启用" prop="state" label-position="left" label-width="80px">
+                    <el-radio v-model="form.state" :label="0">启用</el-radio>
+                    <el-radio v-model="form.state" :label="-1">停用</el-radio>
                 </el-form-item>
                 <el-form-item label="部门经理" prop="manager.username">
                     <el-select value-key="sn" v-model="form.manager" placeholder="请选择部门经理">
@@ -134,6 +138,7 @@
                     name: "",
                     manager: "",
                     parent: "",
+                    state: ""
                 },
                 //弹出框是否显示  false代表不显示
                 formVisible: false,
@@ -163,8 +168,8 @@
                     this.departmentManager = res.data;
                 });
             },
-            //格式化子部门
-            formatterDepartment(row) {
+            /* 格式化子部门 */
+            departmentFormatter(row) {
                 let childrens = row.childrens;
                 if (childrens.length === 0) {
                     return '无子部门';
@@ -222,10 +227,8 @@
             submit() {
                 //验证form表单
                 this.$refs.addForm.validate((valid) => {
-                    if (valid) {//校验通过之后就进入该代码块
-                        //加载框
-                        this.addLoading = true;
-                        //获取form表单中的数据
+                    if (valid) {
+                        // this.addLoading = true;
                         let param = Object.assign({}, this.form);
                         if (param.id) {
                             //保存数据
@@ -264,8 +267,7 @@
                                     });
                                     //弹出框关闭
                                     this.formVisible = false;
-                                    /*//重置form表单
-                                    this.$refs['addForm'].resetFields();*/
+                                    this.$refs['addForm'].resetFields();
                                     //加载列表
                                     this.getDepartments();
                                 } else {

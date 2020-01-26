@@ -17,48 +17,36 @@
 
         <!--员工数据列表-->
         <el-table :data="employees" highlight-current-row v-loading="listLoading" @selection-change="selsChange">
-            <el-table-column type="selection">
+            <el-table-column type="selection" width="55">
             </el-table-column>
-            <el-table-column type="index">
+            <el-table-column type="index" width="100">
             </el-table-column>
-            <el-table-column prop="username" label="账号">
+            <el-table-column prop="username" label="账号" width="170">
             </el-table-column>
-            <el-table-column prop="realName" label="姓名">
+            <el-table-column prop="sn" label="编号" width="170">
             </el-table-column>
-            <el-table-column prop="tel" label="电话">
+            <el-table-column prop="realName" label="姓名" width="170">
             </el-table-column>
-            <el-table-column prop="email" label="邮箱">
+            <el-table-column prop="tel" label="电话" width="170">
             </el-table-column>
-            <el-table-column prop="department.name" label="部门">
+            <el-table-column prop="email" label="邮箱" width="170">
             </el-table-column>
-            <el-table-column prop="state" label="状态" :formatter='stateName'>
+            <el-table-column prop="department.name" label="部门" width="170">
             </el-table-column>
-            <el-table-column label="角色">
+            <el-table-column label="角色" prop="roles" :formatter="roleFormatter" width="170">
+            </el-table-column>
+            <el-table-column prop="inputTime" label="录入时间" width="170">
+            </el-table-column>
+            <el-table-column prop="state" label="状态" width="170" fixed="right">
                 <template scope="scope">
-                    <div>
-                        <span v-for="item in employees[scope.$index].roles">{{item.name}}&ensp;</span>
-                    </div>
+                    <span v-if="employees[scope.$index].state === -1" style="color: red;font-weight:bold">离职</span>
+                    <span v-else="employees[scope.$index].state === 0" style="color: green;font-weight:bold">正常</span>
                 </template>
             </el-table-column>
-            <el-table-column prop="inputTime" label="录入时间">
-            </el-table-column>
-            <el-table-column label="操作">
-                <template scope="scope">
-                    <el-button
-                            size="mini"
-                            type="text"
-                            icon="el-icon-edit"
-                            @click="handleEdit(scope.$index, scope.row)"
-                    >编辑
-                    </el-button>
-                    <!--<el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>-->
-                    <el-button
-                            size="mini"
-                            type="text"
-                            icon="el-icon-delete"
-                            @click="handleDel(scope.$index,scope.row)"
-                    >删除
-                    </el-button>
+            <el-table-column label="操作" width="170" fixed="right">
+                <template slot-scope="scope">
+                    <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                    <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -81,17 +69,40 @@
             <!--rules：主要用来做校验的（定义校验规则的）-->
             <!--ref="addForm"： 简单理解就是id=addForm-->
             <el-form :model="form" label-width="80px" :rules="addFormRules" ref="addForm">
-                <el-form-item label="账号" prop="name">
+                <el-form-item label="账号" prop="username">
                     <el-input v-model="form.username" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="姓名" prop="name">
+                <el-form-item label="编号" prop="sn">
+                    <el-input v-model="form.sn" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="姓名" prop="realName">
                     <el-input v-model="form.realName" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="电话" prop="name">
+                <el-form-item label="电话" prop="tel">
                     <el-input v-model="form.tel" auto-complete="off"></el-input>
                 </el-form-item>
-                <el-form-item label="邮箱" prop="name">
+                <el-form-item label="邮箱" prop="email">
                     <el-input v-model="form.email" auto-complete="off"></el-input>
+                </el-form-item>
+                <el-form-item label="所属部门" prop="department">
+                    <el-select value-key="sn" v-model="form.department" placeholder="请选择部门" filterable>
+                        <el-option v-for="item in employeeDepartment"
+                                   :key="item.sn"
+                                   :value="item"
+                                   :label="item.name"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="角色" prop="roles">
+                    <el-select value-key="sn" v-model="form.roles" placeholder="请选择角色" multiple filterable>
+                        <el-option v-for="item in employeeRoles"
+                                   :key="item.sn"
+                                   :value="item"
+                                   :label="item.name"></el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="状态" prop="state" label-position="left" label-width="80px">
+                    <el-radio v-model="form.state" :label="0">正常</el-radio>
+                    <el-radio v-model="form.state" :label="-1">离职</el-radio>
                 </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -108,6 +119,10 @@
     export default {
         data() {
             return {
+                /* 员工所属部门 */
+                employeeDepartment: [],
+                /* 员工对应角色 */
+                employeeRoles: [],
                 //员工数据列表
                 employees: [],
                 //加载框
@@ -136,9 +151,7 @@
                     tel: "",
                     email: "",
                     state: "",
-                    role: ""
-
-
+                    roles: ""
                 },
                 //弹出框是否显示  false代表不显示
                 formVisible: false,
@@ -157,14 +170,25 @@
             }
         },
         methods: {
-
-
-            //状态格式化
-            stateName(row,) {
-                return row.state == 0 ? "在职" : "离职";
+            /* 获取员工部门下拉框值 */
+            getEmployeeDepartment() {
+                this.$http.post("/department/getDepartment").then(res => {
+                    this.employeeDepartment = res.data;
+                });
             },
-
-            //获取用户列表
+            getEmployeeRoles() {
+                this.$http.get("/role/getRoles").then(res => {
+                    this.employeeRoles = res.data;
+                });
+            },
+            roleFormatter(row) {
+                let roles = row.roles;
+                let myRole = [];
+                for (let role of roles) {
+                    myRole.push(role.name);
+                }
+                return myRole.join(',');
+            },
             getEmployee() {
                 let param = {
                     currentPage: this.currentPage,
@@ -174,65 +198,47 @@
                 this.listLoading = true;
                 this.$http.patch("/employee/selectPageByQuery", param).then(res => {
                     this.employees = res.data.result;
-                    console.debug(this.employees);
                     this.total = res.data.total;
                     this.listLoading = false;
                 });
             },
-            //当前页改变的时候，触发事件
             handleCurrentChange(v) {
-                //修改当前页
                 this.currentPage = v;
                 this.getEmployee();
                 this.listLoading = true;
             },
-            //每页条数改变的时候触发事件
             handleSizeChange(v) {
                 this.currentPage = 1;
                 this.pageSize = v;
                 this.getEmployee();
                 this.listLoading = true;
             },
-            //添加对应的事件
             handleAdd() {
                 this.form = {};
                 this.formVisible = true;
                 this.title = "新增员工";
             },
-            //修改对应的事件
             handleEdit(i, r) {
                 this.form = {};
                 this.title = "修改员工";
                 this.formVisible = true;
-                //回显数据
                 this.form = Object.assign({}, r);
             },
-            //提交数据
             submit() {
-                //验证form表单
                 this.$refs.addForm.validate((valid) => {
-                    if (valid) {//校验通过之后就进入该代码块
-                        //加载框
+                    if (valid) {
                         this.addLoading = true;
-                        //获取form表单中的数据
                         let param = Object.assign({}, this.form);
-                        console.debug(param)
                         if (param.id) {
-                            //保存数据
                             this.$http.post("/employee/update", param).then(res => {
-                                //提交成功
                                 if (res.data.success) {
-                                    //停止添加按钮的加载框
                                     this.addLoading = false;
                                     this.$message({
                                         message: '修改成功',
                                         type: 'success'
                                     });
-                                    //弹出框关闭
                                     this.formVisible = false;
-                                    /*//重置form表单
-                                    this.$refs['addForm'].resetFields();*/
-                                    //加载列表
+                                    this.$refs['addForm'].resetFields();
                                     this.getEmployee();
                                 } else {
                                     this.$notify.error({
@@ -242,21 +248,15 @@
                                 }
                             });
                         } else {
-                            //保存数据
                             this.$http.put("/employee/save", param).then(res => {
-                                //提交成功
                                 if (res.data.success) {
-                                    //停止添加按钮的加载框
                                     this.addLoading = false;
                                     this.$message({
                                         message: '添加成功',
                                         type: 'success'
                                     });
-                                    //弹出框关闭
                                     this.formVisible = false;
-                                    /*//重置form表单
-                                    this.$refs['addForm'].resetFields();*/
-                                    //加载列表
+                                    this.$refs['addForm'].resetFields();
                                     this.getEmployee();
                                 } else {
                                     this.$notify.error({
@@ -269,7 +269,6 @@
                     }
                 });
             },
-            //删除按钮对应的事件
             handleDel(i, r) {
                 this.$confirm('确认删除该记录吗?', '提示', {
                     type: 'warning'
@@ -291,11 +290,9 @@
                 }).catch(() => {
                 });
             },
-            //获取复选框选择数据
             selsChange(v) {
                 this.sels = v;
             },
-            //批量删除
             batchRemove() {
                 this.$confirm('确认删除该记录吗?', '提示', {
                     type: 'warning'
@@ -318,6 +315,8 @@
         },
         mounted() {
             this.getEmployee();
+            this.getEmployeeDepartment();
+            this.getEmployeeRoles();
         }
     }
 
