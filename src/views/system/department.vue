@@ -218,7 +218,7 @@
             //修改对应的事件
             handleEdit(i, r) {
                 this.form = {};
-                this.title = "修改员工";
+                this.title = "修改部门";
                 this.formVisible = true;
                 //回显数据
                 this.form = Object.assign({}, r);

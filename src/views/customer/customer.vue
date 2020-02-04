@@ -469,6 +469,7 @@
                 this.$http.patch("/customer/selectPageByQuery", param).then(res => {
                     /* 这种东西我们一般将res打印出来找到我们需要的属性来填充就好了 */
                     this.customers = res.data.result;
+                    console.debug(this.customers);
                     this.total = res.data.total;
                     this.listLoading = false;
                 });

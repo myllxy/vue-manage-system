@@ -4,7 +4,7 @@
             <el-col :span="8">
                 <el-card shadow="hover" class="mgb20" style="height:252px;">
                     <div class="user-info">
-                        <img src="../../assets/img/img.jpg" class="user-avator" alt />
+                        <img src="../../assets/img/img.jpg" class="user-avator" alt/>
                         <div class="user-info-cont">
                             <div class="user-info-name">{{name}}</div>
                             <div>{{role}}</div>
@@ -22,10 +22,14 @@
                     <div slot="header" class="clearfix">
                         <span>客户开发计划完成度</span>
                         <el-button style="float: right; padding: 5px 0" type="text">查看详情</el-button>
-                    </div>微信营销
-                    <el-progress :percentage="71.3" color="#42b983"></el-progress>朋友介绍
-                    <el-progress :percentage="24.1" color="#f1e05a"></el-progress>电话营销
-                    <el-progress :percentage="13.7"></el-progress>上门拜访
+                    </div>
+                    微信营销
+                    <el-progress :percentage="71.3" color="#42b983"></el-progress>
+                    朋友介绍
+                    <el-progress :percentage="24.1" color="#f1e05a"></el-progress>
+                    电话营销
+                    <el-progress :percentage="13.7"></el-progress>
+                    上门拜访
                     <el-progress :percentage="5.9" color="#f56c6c"></el-progress>
                 </el-card>
             </el-col>
@@ -34,7 +38,7 @@
                     <el-col :span="8">
                         <el-card shadow="hover" :body-style="{padding: '0px'}">
                             <div class="grid-content grid-con-1">
-                                
+
                             </div>
                         </el-card>
                     </el-col>
@@ -75,9 +79,10 @@
                         <el-table-column>
                             <template slot-scope="scope">
                                 <div
-                                    class="todo-item"
-                                    :class="{'todo-item-del': scope.row.status}"
-                                >{{scope.row.title}}</div>
+                                        class="todo-item"
+                                        :class="{'todo-item-del': scope.row.status}"
+                                >{{scope.row.title}}
+                                </div>
                             </template>
                         </el-table-column>
                         <el-table-column width="60">
@@ -116,24 +121,24 @@
                 name: localStorage.getItem('ms_username'),
                 todoList: [
                     {
-                    title: '2020年1月14日需要开发14个客户',
-                    status: false
+                        title: '2020年1月14日需要开发14个客户',
+                        status: false
                     },
                     {
-                    title: '2020年1月13日需要开发13个客户',
-                    status: false
+                        title: '2020年1月13日需要开发13个客户',
+                        status: false
                     },
                     {
-                    title: '2020年1月12日需要开发12个客户',
-                    status: false
+                        title: '2020年1月12日需要开发12个客户',
+                        status: false
                     },
                     {
-                    title: '2020年1月11日要需开发11个客户',
-                    status: false
+                        title: '2020年1月11日要需开发11个客户',
+                        status: false
                     },
                     {
-                    title: '2020年1月10日要需开发10个客户',
-                    status: true
+                        title: '2020年1月10日要需开发10个客户',
+                        status: true
                     },
                     {
                         title: '2020年1月09日需要开发9个客户',
@@ -144,8 +149,8 @@
                         status: true
                     },
                     {
-                    title: '2020年1月07日要开发7个客户',
-                    status: true
+                        title: '2020年1月07日要开发7个客户',
+                        status: true
                     }
                 ],
             };
@@ -162,7 +167,7 @@
             currentTime() {
                 setInterval(this.getDate, 500);
             },
-            getDate: function() {
+            getDate: function () {
                 var _this = this;
                 let yy = new Date().getFullYear();
                 let mm = new Date().getMonth() + 1;
@@ -189,8 +194,8 @@
                 } else {
                     this.nowWeek = "星期日";
                 }
-                _this.nowTime = hh + ":" + mf+":"+ss;
-                _this.nowDate = yy + "年" + mm + "月" + dd+"日";
+                _this.nowTime = hh + ":" + mf + ":" + ss;
+                _this.nowDate = yy + "年" + mm + "月" + dd + "日";
             }
 
 
@@ -199,7 +204,7 @@
             this.currentTime();
         },
         // 销毁定时器
-        beforeDestroy: function() {
+        beforeDestroy: function () {
             if (this.getDate) {
                 console.log("销毁定时器")
                 clearInterval(this.getDate); // 在Vue实例销毁前，清除时间定时器
@@ -210,112 +215,112 @@
 
 
 <style scoped>
-.el-row {
-    margin-bottom: 20px;
-}
+    .el-row {
+        margin-bottom: 20px;
+    }
 
-.grid-content {
-    display: flex;
-    align-items: center;
-    height: 100px;
-}
+    .grid-content {
+        display: flex;
+        align-items: center;
+        height: 100px;
+    }
 
-.grid-cont-right {
-    flex: 1;
-    text-align: center;
-    font-size: 14px;
-    color: #999;
-}
+    .grid-cont-right {
+        flex: 1;
+        text-align: center;
+        font-size: 14px;
+        color: #999;
+    }
 
-.grid-num {
-    font-size: 30px;
-    font-weight: bold;
-}
+    .grid-num {
+        font-size: 30px;
+        font-weight: bold;
+    }
 
-.grid-con-icon {
-    font-size: 50px;
-    width: 100px;
-    height: 100px;
-    text-align: center;
-    line-height: 100px;
-    color: #fff;
-}
+    .grid-con-icon {
+        font-size: 50px;
+        width: 100px;
+        height: 100px;
+        text-align: center;
+        line-height: 100px;
+        color: #fff;
+    }
 
-.grid-con-1 .grid-con-icon {
-    background: rgb(45, 140, 240);
-}
+    .grid-con-1 .grid-con-icon {
+        background: rgb(45, 140, 240);
+    }
 
-.grid-con-1 .grid-num {
-    color: rgb(45, 140, 240);
-}
+    .grid-con-1 .grid-num {
+        color: rgb(45, 140, 240);
+    }
 
-.grid-con-2 .grid-con-icon {
-    background: rgb(100, 213, 114);
-}
+    .grid-con-2 .grid-con-icon {
+        background: rgb(100, 213, 114);
+    }
 
-.grid-con-2 .grid-num {
-    color: rgb(45, 140, 240);
-}
+    .grid-con-2 .grid-num {
+        color: rgb(45, 140, 240);
+    }
 
-.grid-con-3 .grid-con-icon {
-    background: rgb(242, 94, 67);
-}
+    .grid-con-3 .grid-con-icon {
+        background: rgb(242, 94, 67);
+    }
 
-.grid-con-3 .grid-num {
-    color: rgb(242, 94, 67);
-}
+    .grid-con-3 .grid-num {
+        color: rgb(242, 94, 67);
+    }
 
-.user-info {
-    display: flex;
-    align-items: center;
-    padding-bottom: 20px;
-    border-bottom: 2px solid #ccc;
-    margin-bottom: 20px;
-}
+    .user-info {
+        display: flex;
+        align-items: center;
+        padding-bottom: 20px;
+        border-bottom: 2px solid #ccc;
+        margin-bottom: 20px;
+    }
 
-.user-avator {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-}
+    .user-avator {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+    }
 
-.user-info-cont {
-    padding-left: 50px;
-    flex: 1;
-    font-size: 14px;
-    color: #999;
-}
+    .user-info-cont {
+        padding-left: 50px;
+        flex: 1;
+        font-size: 14px;
+        color: #999;
+    }
 
-.user-info-cont div:first-child {
-    font-size: 30px;
-    color: #222;
-}
+    .user-info-cont div:first-child {
+        font-size: 30px;
+        color: #222;
+    }
 
-.user-info-list {
-    font-size: 14px;
-    color: #999;
-    line-height: 25px;
-}
+    .user-info-list {
+        font-size: 14px;
+        color: #999;
+        line-height: 25px;
+    }
 
-.user-info-list span {
-    margin-left: 70px;
-}
+    .user-info-list span {
+        margin-left: 70px;
+    }
 
-.mgb20 {
-    margin-bottom: 20px;
-}
+    .mgb20 {
+        margin-bottom: 20px;
+    }
 
-.todo-item {
-    font-size: 14px;
-}
+    .todo-item {
+        font-size: 14px;
+    }
 
-.todo-item-del {
-    text-decoration: line-through;
-    color: #999;
-}
+    .todo-item-del {
+        text-decoration: line-through;
+        color: #999;
+    }
 
-.schart {
-    width: 100%;
-    height: 300px;
-}
+    .schart {
+        width: 100%;
+        height: 300px;
+    }
 </style>

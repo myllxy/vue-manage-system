@@ -76,7 +76,6 @@
                                 });
                             } else {
                                 sessionStorage.setItem('user', JSON.stringify(object.object));
-                                /* 存储每个用户对应的菜单 */
                                 //存储sessionId
                                 sessionStorage.setItem('sessionId', object.sessionId);
                                 this.$router.push({path: '/Dashboard'});

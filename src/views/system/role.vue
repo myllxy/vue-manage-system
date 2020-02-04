@@ -62,9 +62,18 @@
                 </el-form-item>
                 <div style="text-align: center;">
                     <el-form-item prop="permissions" label="选择权限">
-                        <el-transfer style="text-align: left; display: inline-block; " :button-texts="['移除', '添加']"
-                                     :props="{key: 'sn',label: 'name'}"
-                                     v-model="form.permissions" :data="data" :titles="titles"></el-transfer>
+                        <!--<el-transfer style="text-align: left; display: inline-block; " :button-texts="['移除', '添加']"-->
+                        <!--:props="{key: 'sn',label: 'name'}"-->
+                        <!--v-model="form.permissions" :data="data" :titles="titles"></el-transfer>-->
+                        <!-- @addBtn='add' @removeBtn='remove' -->
+                        <tree-transfer :title="titles"
+                                       :from_data='fromData'
+                                       :to_data='toData'
+                                       :defaultProps="{label:'label'}"
+                                       :mode='mode'
+                                       @addBtn='add' @removeBtn='remove'
+                                       height='540px' filter>
+                        </tree-transfer>
                     </el-form-item>
                 </div>
             </el-form>
@@ -77,12 +86,50 @@
 </template>
 
 <script>
+    import treeTransfer from 'el-tree-transfer'
+
     export default {
         data() {
             return {
+                mode: "transfer", // transfer addressList
+                fromData: [
+                    {
+                        id: "1",
+                        pid: "0",
+                        label: "一级 1",
+                        children: [
+                            {
+                                id: "1-1",
+                                pid: "1",
+                                label: "二级 1-1",
+                                children: []
+                            },
+                            {
+                                id: "1-2",
+                                pid: "1",
+                                label: "二级 1-2",
+                                children: [
+                                    {
+                                        id: "1-2-1",
+                                        pid: "1-2",
+                                        children: [],
+                                        label: "二级 1-2-1"
+                                    },
+                                    {
+                                        id: "1-2-2",
+                                        pid: "1-2",
+                                        children: [],
+                                        label: "二级 1-2-2"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                ],
+                toData: [],
                 //权限列表准备的数据
                 data: [],
-                titles: ["全部权限", "已有权限"],
+                titles: ["未有权限", "已有权限"],
                 //角色数据列表
                 roles: [],
                 //加载框
@@ -107,6 +154,7 @@
                 form: {
                     id: "",
                     name: "",
+                    sn: "",
                     permissions: []
                 },
                 //弹出框是否显示  false代表不显示
@@ -122,7 +170,6 @@
                         {required: true, message: '请输入角色编号', trigger: 'blur'}
                     ]
                 }
-
             }
         },
         methods: {
@@ -130,6 +177,7 @@
             formatterPermission(row) {
                 //获取角色拥有的权限
                 let permissions = row.permissions;
+                console.debug(row.permissions);
                 //创建一个数组，表示拥有的权限
                 let myPermissions = [];
                 for (let i = 0; i < permissions.length; i++) {
@@ -150,7 +198,6 @@
                 //开启加载框
                 this.listLoading = true;
                 this.$http.patch("/role/selectPageByQuery", param).then(res => {
-                    console.debug(res);
                     this.roles = res.data.result;
                     this.total = res.data.total;
                     this.listLoading = false;
@@ -159,7 +206,7 @@
             //获取权限列表
             getPermission() {
                 this.$http.patch("/permission/list").then(res => {
-                    // this.roles = res.data.result;
+                    this.fromData = res.data;
                     this.data = res.data;
                 });
             },
@@ -190,17 +237,24 @@
                 this.formVisible = true;
                 //回显数据
                 this.form = Object.assign({}, r);
-                let permissions = this.form.permissions;
-                //定义一个数组，来装回显的id
-                let permissionsArray = [];
-                //循环迭代所有的权限
-                for (let i = 0; i < permissions.length; i++) {
-                    //拿到权限具体的对象
-                    let p = permissions[i];
-                    permissionsArray.push(p.id);
+                /* 手动回显，而不是动态绑定的方式回显 */
+                let parentPer = [];
+                let childPer = [];
+                for (let permission of this.form.permissions) {
+                    permission.pid === '0' ? parentPer.push(permission) : childPer.push(permission);
                 }
-                //给权限重新赋值
-                this.form.permissions = permissionsArray;
+                for (let parent of parentPer) {
+                    parent.children = [];
+                    for (let child of childPer) {
+                        if (child.pid === parent.id.toString()) {
+                            console.debug('11111');
+                            parent.children.push(child);
+                        }
+                    }
+                }
+                console.debug(parentPer);
+                this.toData = parentPer;
+                console.debug(this.toData);
             },
             //提交数据
             submit() {
@@ -209,19 +263,7 @@
                     if (valid) {
                         this.addLoading = true;
                         let param = Object.assign({}, this.form);
-                        //新增一个数组，来装权限对应的对象
-                        let myPermissions = [];
-                        //拿到已有权限的id  格式[1,2]  我要把这种格式转为上面的格式
-                        let permissions = param.permissions;
-                        for (let i = 0; i < permissions.length; i++) {
-                            let p = permissions[i];
-                            let obj = {
-                                sn: p
-                            };
-                            myPermissions.push(obj);
-                        }
-                        param.permissions = myPermissions;
-                        console.debug(myPermissions);
+                        param.permissions = this.toData;
                         if (param.id) {
                             this.$http.post("/role/update", param).then(res => {
                                 if (res.data.success) {
@@ -230,6 +272,7 @@
                                         message: '修改成功',
                                         type: 'success'
                                     });
+                                    this.addLoading = false;
                                     this.formVisible = false;
                                     this.$refs['addForm'].resetFields();
                                     this.getRoles();
@@ -304,12 +347,41 @@
                     })
                 }).catch(() => {
                 });
+            },
+            // 切换模式 现有树形穿梭框模式transfer 和通讯录模式addressList
+            changeMode() {
+                if (this.mode === "transfer") {
+                    this.mode = "addressList";
+                } else {
+                    this.mode = "transfer";
+                }
+            },
+            // 监听穿梭框组件添加
+            add(fromData, toData, obj) {
+                // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的{keys,nodes,halfKeys,halfNodes}对象
+                // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
+                console.log("fromData:", fromData);
+                this.fromData = fromData;
+                console.log("toData:", toData);
+                this.toData = toData;
+                console.log("obj:", obj);
+            },
+            // 监听穿梭框组件移除
+            remove(fromData, toData, obj) {
+                // 树形穿梭框模式transfer时，返回参数为左侧树移动后数据、右侧树移动后数据、移动的{keys,nodes,halfKeys,halfNodes}对象
+                // 通讯录模式addressList时，返回参数为右侧收件人列表、右侧抄送人列表、右侧密送人列表
+                console.log("fromData:", fromData);
+                this.fromData = fromData;
+                console.log("toData:", toData);
+                this.toData = toData;
+                console.log("obj:", obj);
             }
         },
         mounted() {
             this.getRoles();
             this.getPermission();
-        }
+        },
+        components: {treeTransfer},
     }
 
 </script>

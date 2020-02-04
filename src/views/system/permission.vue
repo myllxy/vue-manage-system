@@ -24,9 +24,11 @@
             </el-table-column>
             <el-table-column prop="name" label="权限名称" width="300">
             </el-table-column>
-            <el-table-column prop="resource" label="资源地址" width="300">
+            <el-table-column prop="sn" label="权限编号" width="300">
             </el-table-column>
-            <el-table-column label="操作">
+            <el-table-column prop="resource" label="资源地址" fixed="right" width="300">
+            </el-table-column>
+            <el-table-column label="操作" fixed="right" width="300">
                 <template scope="scope">
                     <el-button size="small" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button type="danger" size="small" @click="handleDel(scope.$index, scope.row)">删除</el-button>
